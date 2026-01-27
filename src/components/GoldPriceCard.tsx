@@ -3,15 +3,21 @@
 "use client";
 
 import { TrendingUp, TrendingDown, Clock, DollarSign } from "lucide-react";
-import { formatCurrency, formatPercentage, formatDate } from "@/lib/utils";
+import {
+  formatCurrency,
+  formatPercentage,
+  formatDate,
+  getUnitLabel,
+} from "@/lib/utils";
 import { GoldAPIResponse } from "@/types/gold";
 
 interface GoldPriceCardProps {
   data: GoldAPIResponse;
   loading?: boolean;
+  unit?: string;
 }
 
-export default function GoldPriceCard({ data, loading }: GoldPriceCardProps) {
+export default function GoldPriceCard({ data, loading, unit }: GoldPriceCardProps) {
   if (loading) {
     return (
       <div className="card-gold p-6 animate-pulse">
@@ -34,7 +40,7 @@ export default function GoldPriceCard({ data, loading }: GoldPriceCardProps) {
           <h2 className="text-4xl font-bold text-gradient-gold">
             {formatCurrency(data.price, data.currency)}
           </h2>
-          <p className="text-xs text-muted mt-1">per troy ounce</p>
+          <p className="text-xs text-muted mt-1">per {getUnitLabel(unit)}</p>
         </div>
 
         <div className="bg-gradient-gold p-3 rounded-lg shadow-gold">

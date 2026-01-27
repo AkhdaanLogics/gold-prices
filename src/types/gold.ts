@@ -39,11 +39,12 @@ export interface ChartData {
   label: string;
 }
 
-export type Currency = "USD" | "IDR" | "EUR" | "GBP";
+export type Currency = "USD" | "IDR" | "EUR" | "GBP" | "JPY" | "AUD" | "CAD";
 export type Metal = "XAU" | "XAG" | "XPT" | "XPD";
+export type Unit = "oz" | "gram" | "kg" | "tola" | "baht";
 
 export interface GoldSettings {
   currency: Currency;
   metal: Metal;
-  unit: "oz" | "gram";
+  unit: Unit;
 }

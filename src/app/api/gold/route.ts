@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getGoldAPIClient } from "@/lib/goldapi";
 import { Currency, Metal } from "@/types/gold";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const revalidate = 3600; // Revalidate every hour
 
 export async function GET(request: NextRequest) {
@@ -12,12 +12,18 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const metal = (searchParams.get("metal") || "XAU") as Metal;
     const currency = (searchParams.get("currency") || "USD") as Currency;
+    const unit = searchParams.get("unit") || "oz";
     const type = searchParams.get("type") || "current";
 
     const client = getGoldAPIClient();
 
     if (type === "current") {
-      const data = await client.getCurrentPrice(metal, currency);
+      const data = await client.getPriceWithConversion(
+        metal,
+        "USD",
+        currency,
+        unit,
+      );
 
       return NextResponse.json({
         success: true,

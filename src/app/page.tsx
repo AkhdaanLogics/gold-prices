@@ -8,14 +8,16 @@ import GoldPriceCard from "@/components/GoldPriceCard";
 import GoldChart from "@/components/GoldChart";
 import PriceHistory from "@/components/PriceHistory";
 import { RefreshCw, AlertCircle } from "lucide-react";
-import { GoldAPIResponse } from "@/types/gold";
-import { generateMockHistoricalData } from "@/lib/utils";
+import { GoldAPIResponse, Currency, Unit } from "@/types/gold";
+import { generateMockHistoricalData, getUnitLabel } from "@/lib/utils";
 
 export default function HomePage() {
   const [goldData, setGoldData] = useState<GoldAPIResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency>("USD");
+  const [selectedUnit, setSelectedUnit] = useState<Unit>("oz");
 
   const fetchGoldPrice = async () => {
     try {
@@ -23,7 +25,7 @@ export default function HomePage() {
       setError(null);
 
       const response = await fetch(
-        "/api/gold?metal=XAU&currency=USD&type=current",
+        `/api/gold?metal=XAU&currency=${selectedCurrency}&unit=${selectedUnit}&type=current`,
       );
 
       if (!response.ok) {
@@ -132,7 +134,8 @@ export default function HomePage() {
             </h2>
             <p className="text-secondary mt-1">
               Last updated: {lastUpdate.toLocaleDateString()} at{" "}
-              {lastUpdate.toLocaleTimeString()} (Daily refresh at midnight WIB)
+              {lastUpdate.toLocaleTimeString()} (Jakarta GMT+7 - Daily refresh
+              at midnight)
             </p>
           </div>
 
@@ -144,6 +147,41 @@ export default function HomePage() {
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </button>
+        </div>
+
+        {/* Settings */}
+        <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-secondary">Currency:</label>
+            <select
+              value={selectedCurrency}
+              onChange={(e) => setSelectedCurrency(e.target.value as Currency)}
+              className="bg-secondary border border-secondary rounded px-3 py-1 text-white"
+            >
+              <option value="USD">USD</option>
+              <option value="IDR">IDR</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="JPY">JPY</option>
+              <option value="AUD">AUD</option>
+              <option value="CAD">CAD</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-secondary">Unit:</label>
+            <select
+              value={selectedUnit}
+              onChange={(e) => setSelectedUnit(e.target.value as Unit)}
+              className="bg-secondary border border-secondary rounded px-3 py-1 text-white"
+            >
+              <option value="oz">Troy Ounce</option>
+              <option value="gram">Gram</option>
+              <option value="kg">Kilogram</option>
+              <option value="tola">Tola</option>
+              <option value="baht">Baht</option>
+            </select>
+          </div>
         </div>
 
         {/* Main Grid */}
@@ -178,7 +216,7 @@ export default function HomePage() {
               <div className="bg-secondary p-4 rounded-lg border border-secondary">
                 <p className="text-sm text-secondary">Unit</p>
                 <p className="text-xl font-bold text-gradient-gold">
-                  Troy Ounce
+                  {getUnitLabel(selectedUnit)}
                 </p>
               </div>
             </div>

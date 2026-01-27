@@ -54,6 +54,64 @@ export class GoldAPIClient {
     const results = await Promise.all(promises);
     return results.filter(Boolean);
   }
+
+  async getPriceWithConversion(
+    metal: Metal = "XAU",
+    baseCurrency: Currency = "USD",
+    targetCurrency: Currency = "USD",
+    unit: string = "oz",
+  ): Promise<any> {
+    const data = await this.getCurrentPrice(metal, baseCurrency);
+
+    // Convert currency if needed
+    let convertedPrice = data.price;
+    let convertedAsk = data.ask;
+    let convertedBid = data.bid;
+    let convertedCh = data.ch;
+
+    if (baseCurrency !== targetCurrency) {
+      const { convertPriceToCurrency } = await import("@/lib/utils");
+      convertedPrice = await convertPriceToCurrency(
+        data.price,
+        baseCurrency,
+        targetCurrency,
+      );
+      convertedAsk = await convertPriceToCurrency(
+        data.ask,
+        baseCurrency,
+        targetCurrency,
+      );
+      convertedBid = await convertPriceToCurrency(
+        data.bid,
+        baseCurrency,
+        targetCurrency,
+      );
+      convertedCh = await convertPriceToCurrency(
+        data.ch,
+        baseCurrency,
+        targetCurrency,
+      );
+    }
+
+    // Convert unit if needed
+    const { convertPriceToUnit } = await import("@/lib/utils");
+    if (unit !== "oz") {
+      convertedPrice = convertPriceToUnit(convertedPrice, unit);
+      convertedAsk = convertPriceToUnit(convertedAsk, unit);
+      convertedBid = convertPriceToUnit(convertedBid, unit);
+      convertedCh = convertPriceToUnit(convertedCh, unit);
+    }
+
+    return {
+      ...data,
+      price: convertedPrice,
+      ask: convertedAsk,
+      bid: convertedBid,
+      ch: convertedCh,
+      currency: targetCurrency,
+      unit,
+    };
+  }
 }
 
 // Export singleton instance for server-side

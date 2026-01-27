@@ -63,3 +63,66 @@ export function generateMockHistoricalData(
 
   return data;
 }
+
+// Unit conversion constants (based on 1 troy ounce)
+const UNIT_CONVERSIONS = {
+  oz: 1, // troy ounce
+  gram: 31.1035,
+  kg: 0.0311035,
+  tola: 2.6667, // Indian tola
+  baht: 15.244, // Thai baht
+};
+
+export function convertPriceToUnit(
+  pricePerOz: number,
+  targetUnit: string,
+): number {
+  if (!UNIT_CONVERSIONS[targetUnit as keyof typeof UNIT_CONVERSIONS]) {
+    throw new Error(`Unsupported unit: ${targetUnit}`);
+  }
+  return (
+    pricePerOz / UNIT_CONVERSIONS[targetUnit as keyof typeof UNIT_CONVERSIONS]
+  );
+}
+
+export async function convertPriceToCurrency(
+  price: number,
+  fromCurrency: string,
+  toCurrency: string,
+): Promise<number> {
+  if (fromCurrency === toCurrency) return price;
+
+  try {
+    const response = await fetch(
+      `https://api.exchangerate-api.com/v4/latest/${fromCurrency}`,
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch exchange rates");
+    }
+
+    const data = await response.json();
+    const rate = data.rates[toCurrency];
+
+    if (!rate) {
+      throw new Error(`Exchange rate not found for ${toCurrency}`);
+    }
+
+    return price * rate;
+  } catch (error) {
+    console.error("Currency conversion error:", error);
+    // Fallback: return original price if conversion fails
+    return price;
+  }
+}
+
+export function getUnitLabel(unit: string): string {
+  const labels = {
+    oz: "Troy Ounce",
+    gram: "Gram",
+    kg: "Kilogram",
+    tola: "Tola",
+    baht: "Baht",
+  };
+  return labels[unit as keyof typeof labels] || unit;
+}
