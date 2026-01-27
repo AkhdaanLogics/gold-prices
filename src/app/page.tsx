@@ -19,7 +19,7 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { GoldAPIResponse, Currency, Unit } from "@/types/gold";
-import { generateMockHistoricalData, getUnitLabel } from "@/lib/utils";
+import { getUnitLabel } from "@/lib/utils";
 
 type Theme = "white" | "blue" | "dark";
 
@@ -31,6 +31,11 @@ export default function HomePage() {
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>("USD");
   const [selectedUnit, setSelectedUnit] = useState<Unit>("oz");
   const [theme, setTheme] = useState<Theme>("blue");
+  const [timeRange, setTimeRange] = useState<number>(30);
+  const [historicalData, setHistoricalData] = useState<
+    { date: string; price: number }[]
+  >([]);
+  const [loadingHistorical, setLoadingHistorical] = useState<boolean>(true);
 
   const fetchGoldPrice = async () => {
     try {
@@ -61,8 +66,38 @@ export default function HomePage() {
     }
   };
 
+  const fetchHistoricalData = async () => {
+    try {
+      setLoadingHistorical(true);
+
+      const response = await fetch(
+        `/api/gold?metal=XAU&currency=${selectedCurrency}&unit=${selectedUnit}&type=historical-range&days=${timeRange}`,
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success && Array.isArray(result.data)) {
+        setHistoricalData(result.data);
+      } else {
+        throw new Error(result.error || "Failed to fetch historical data");
+      }
+    } catch (err: any) {
+      console.error("Error fetching historical data:", err);
+      setError(
+        err.message || "Failed to load historical data. Please try again.",
+      );
+    } finally {
+      setLoadingHistorical(false);
+    }
+  };
+
   useEffect(() => {
     fetchGoldPrice();
+    fetchHistoricalData();
 
     // Calculate time until next midnight WIB (UTC+7)
     const getTimeUntilMidnightWIB = () => {
@@ -79,6 +114,7 @@ export default function HomePage() {
     // Set timeout for first daily refresh at midnight WIB
     const timeoutId = setTimeout(() => {
       fetchGoldPrice();
+      fetchHistoricalData();
 
       // Then set up daily interval (24 hours)
       const intervalId = setInterval(
@@ -98,7 +134,7 @@ export default function HomePage() {
         clearInterval((window as any).__goldRefreshInterval);
       }
     };
-  }, [selectedCurrency, selectedUnit]);
+  }, [selectedCurrency, selectedUnit, timeRange]);
 
   useEffect(() => {
     const stored =
@@ -114,9 +150,6 @@ export default function HomePage() {
     root.classList.add(`theme-${theme}`);
     localStorage.setItem("gold-theme", theme);
   }, [theme]);
-
-  // Generate mock historical data for chart (memoized to prevent regeneration)
-  const historicalData = useMemo(() => generateMockHistoricalData(30), []);
 
   const chartData = useMemo(
     () =>
@@ -221,6 +254,19 @@ export default function HomePage() {
               <option value="baht">Baht</option>
             </select>
           </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-secondary">Trend:</label>
+            <select
+              value={timeRange}
+              onChange={(e) => setTimeRange(parseInt(e.target.value))}
+              className="bg-secondary border border-secondary rounded px-3 py-1 text-primary"
+            >
+              <option value="7">7 Days</option>
+              <option value="30">30 Days</option>
+              <option value="60">60 Days</option>
+            </select>
+          </div>
         </div>
 
         {/* Main Grid */}
@@ -242,14 +288,29 @@ export default function HomePage() {
             </div>
 
             <div className="card-gold p-6">
-              <GoldChart data={chartData} currency={selectedCurrency} />
+              {loadingHistorical ? (
+                <div className="h-64 animate-pulse bg-secondary rounded" />
+              ) : (
+                <GoldChart data={chartData} currency={selectedCurrency} />
+              )}
             </div>
 
             <div className="card-gold p-6 flex flex-col">
-              <PriceHistory
-                data={priceHistoryData}
-                currency={selectedCurrency}
-              />
+              {loadingHistorical ? (
+                <div className="space-y-3">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="h-6 bg-secondary animate-pulse rounded"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <PriceHistory
+                  data={priceHistoryData}
+                  currency={selectedCurrency}
+                />
+              )}
             </div>
 
             <FAQ />

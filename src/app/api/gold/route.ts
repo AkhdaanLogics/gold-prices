@@ -58,6 +58,8 @@ export async function GET(request: NextRequest) {
 
     if (type === "historical") {
       const date = searchParams.get("date");
+      const unit = searchParams.get("unit") || "oz";
+
       if (!date) {
         return NextResponse.json(
           { success: false, error: "Date parameter is required" },
@@ -66,7 +68,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Cache historical data with date in key
-      const cacheKey = `gold_historical_${metal}_${currency}_${date}`;
+      const cacheKey = `gold_historical_${metal}_${currency}_${unit}_${date}`;
       const cachedData = cache.get(cacheKey);
 
       if (cachedData) {
@@ -81,12 +83,110 @@ export async function GET(request: NextRequest) {
       const client = getGoldAPIClient();
       const data = await client.getHistoricalPrice(metal, currency, date);
 
+      const { convertPriceToUnit } = await import("@/lib/utils");
+      const convertedPrice =
+        unit !== "oz" ? convertPriceToUnit(data.price, unit) : data.price;
+
+      const response = {
+        ...data,
+        price: convertedPrice,
+        unit,
+      };
+
       // Cache historical data for 30 days (never changes)
-      cache.set(cacheKey, data, 30 * 24 * 60 * 60 * 1000);
+      cache.set(cacheKey, response, 30 * 24 * 60 * 60 * 1000);
 
       return NextResponse.json({
         success: true,
-        data,
+        data: response,
+        cached: false,
+        timestamp: Date.now(),
+      });
+    }
+
+    if (type === "historical-range") {
+      const unit = searchParams.get("unit") || "oz";
+      const daysParam = searchParams.get("days");
+      const days = Math.min(
+        Math.max(parseInt(daysParam || "30", 10) || 30, 1),
+        60,
+      );
+
+      const cacheKey = `gold_hist_range_${metal}_${currency}_${unit}_${days}`;
+      const cachedSeries = cache.get(cacheKey);
+      if (cachedSeries) {
+        return NextResponse.json({
+          success: true,
+          data: cachedSeries,
+          cached: true,
+          timestamp: Date.now(),
+        });
+      }
+
+      const client = getGoldAPIClient();
+      const { convertPriceToUnit, convertPriceToCurrency } =
+        await import("@/lib/utils");
+
+      // Build date list for past N days (most recent first)
+      const dates: string[] = [];
+      const today = new Date();
+      for (let i = 0; i < days; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const y = d.getFullYear();
+        const m = `${d.getMonth() + 1}`.padStart(2, "0");
+        const day = `${d.getDate()}`.padStart(2, "0");
+        dates.push(`${y}${m}${day}`);
+      }
+
+      const series = [] as { date: string; price: number }[];
+      for (const date of dates) {
+        const singleCacheKey = `gold_historical_${metal}_${currency}_${unit}_${date}`;
+        const cachedDay = cache.get(singleCacheKey) as any;
+        if (cachedDay) {
+          series.push({
+            date: `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`,
+            price: cachedDay.price,
+          });
+          continue;
+        }
+
+        // Fetch in USD first
+        const data: any = await client.getHistoricalPrice(metal, "USD", date);
+
+        // Convert currency if needed
+        let convertedPrice = data.price;
+        if (currency !== "USD") {
+          convertedPrice = await convertPriceToCurrency(
+            data.price,
+            "USD",
+            currency,
+          );
+        }
+
+        // Convert unit if needed
+        if (unit !== "oz") {
+          convertedPrice = convertPriceToUnit(convertedPrice, unit);
+        }
+
+        cache.set(
+          singleCacheKey,
+          { ...data, price: convertedPrice, currency, unit },
+          30 * 24 * 60 * 60 * 1000,
+        );
+
+        series.push({
+          date: `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`,
+          price: convertedPrice,
+        });
+      }
+
+      // cache whole series for quick reuse
+      cache.set(cacheKey, series, 24 * 60 * 60 * 1000); // refresh daily
+
+      return NextResponse.json({
+        success: true,
+        data: series.reverse(), // oldest first for chart
         cached: false,
         timestamp: Date.now(),
       });
