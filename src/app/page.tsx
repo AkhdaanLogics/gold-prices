@@ -7,6 +7,8 @@ import Header from "@/components/Header";
 import GoldPriceCard from "@/components/GoldPriceCard";
 import GoldChart from "@/components/GoldChart";
 import PriceHistory from "@/components/PriceHistory";
+import GoldNews from "@/components/GoldNews";
+import MarketSentiment from "@/components/MarketSentiment";
 import { RefreshCw, AlertCircle } from "lucide-react";
 import { GoldAPIResponse, Currency, Unit } from "@/types/gold";
 import { generateMockHistoricalData, getUnitLabel } from "@/lib/utils";
@@ -158,6 +160,16 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Info Banner */}
+        <div className="card-gold p-4 mb-6 border-l-4 border-l-gradient-gold">
+          <p className="text-secondary text-sm leading-relaxed">
+            Monitor real-time gold prices across multiple currencies and units.
+            Data updates daily at midnight Jakarta time. Use the chart to track
+            30-day trends, view recent price history, and make informed
+            decisions with our market insights.
+          </p>
+        </div>
+
         {/* Settings */}
         <div className="flex items-center gap-4 mb-8">
           <div className="flex items-center gap-2">
@@ -194,23 +206,36 @@ export default function HomePage() {
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Price Card */}
-          <div className="lg:col-span-2">
-            {goldData ? (
-              <GoldPriceCard
-                data={goldData}
-                loading={loading}
-                unit={selectedUnit}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Left column */}
+          <div className="xl:col-span-2 space-y-6">
+            <div>
+              {goldData ? (
+                <GoldPriceCard
+                  data={goldData}
+                  loading={loading}
+                  unit={selectedUnit}
+                />
+              ) : (
+                <div className="card-gold p-6 animate-pulse">
+                  <div className="h-32 bg-gold-200 rounded"></div>
+                </div>
+              )}
+            </div>
+
+            <div className="card-gold p-6">
+              <GoldChart data={chartData} currency={selectedCurrency} />
+            </div>
+
+            <div className="card-gold p-6">
+              <PriceHistory
+                data={priceHistoryData}
+                currency={selectedCurrency}
               />
-            ) : (
-              <div className="card-gold p-6 animate-pulse">
-                <div className="h-32 bg-gold-200 rounded"></div>
-              </div>
-            )}
+            </div>
           </div>
 
-          {/* Quick Stats */}
+          {/* Right column */}
           <div className="space-y-4">
             <div className="card-gold p-6">
               <h3 className="text-lg font-bold text-primary mb-4">
@@ -238,31 +263,56 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="card-gold p-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-bold text-primary">
-                  Gold Price Prediction
+            <div className="card-gold p-3">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-primary">
+                  Price Forecast
                 </h3>
-                <span className="text-xs font-semibold px-2 py-1 rounded-full bg-secondary border border-secondary text-secondary">
-                  Coming soon
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-secondary border border-secondary text-secondary">
+                  Soon
                 </span>
               </div>
-              <p className="text-secondary text-sm leading-relaxed">
-                We are building AI-powered forecasts to help you anticipate gold
-                price movements. Stay tuned!
+              <p className="text-xs text-muted leading-relaxed">
+                Advanced AI-powered forecasting tool to predict future gold
+                prices based on historical trends, market patterns, and economic
+                indicators. Get actionable insights to optimize your investment
+                timing.
               </p>
             </div>
+
+            <div className="card-gold p-3">
+              <h3 className="text-sm font-bold text-primary mb-2">
+                Market Insights
+              </h3>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <span className="text-gradient-gold text-xs">💡</span>
+                  <p className="text-xs text-muted">
+                    Gold typically rises during economic uncertainty
+                  </p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-gradient-gold text-xs">📊</span>
+                  <p className="text-xs text-muted">
+                    Monitor central bank policies for price trends
+                  </p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-gradient-gold text-xs">⚡</span>
+                  <p className="text-xs text-muted">
+                    USD strength inversely affects gold prices
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <MarketSentiment
+              priceChange={goldData?.ch || 0}
+              priceChangePercent={goldData?.chp || 0}
+            />
+
+            <GoldNews />
           </div>
-        </div>
-
-        {/* Chart */}
-        <div className="mb-6">
-          <GoldChart data={chartData} currency={selectedCurrency} />
-        </div>
-
-        {/* Price History */}
-        <div>
-          <PriceHistory data={priceHistoryData} currency={selectedCurrency} />
         </div>
 
         {/* Footer Info */}
