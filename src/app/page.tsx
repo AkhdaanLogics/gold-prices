@@ -9,7 +9,14 @@ import GoldChart from "@/components/GoldChart";
 import PriceHistory from "@/components/PriceHistory";
 import GoldNews from "@/components/GoldNews";
 import MarketSentiment from "@/components/MarketSentiment";
-import { RefreshCw, AlertCircle } from "lucide-react";
+import FAQ from "@/components/FAQ";
+import {
+  RefreshCw,
+  AlertCircle,
+  BarChart3,
+  TrendingUp,
+  Lightbulb,
+} from "lucide-react";
 import { GoldAPIResponse, Currency, Unit } from "@/types/gold";
 import { generateMockHistoricalData, getUnitLabel } from "@/lib/utils";
 
@@ -243,14 +250,19 @@ export default function HomePage() {
                 currency={selectedCurrency}
               />
             </div>
+
+            <div className="hidden xl:block">
+              <FAQ />
+            </div>
           </div>
 
           {/* Right column */}
           <div className="space-y-4">
             <div className="card-gold p-6">
-              <h3 className="text-lg font-bold text-primary mb-4">
-                Quick Stats
-              </h3>
+              <div className="flex items-center gap-2 mb-4">
+                <BarChart3 className="w-4 h-4 text-gradient-gold" />
+                <h3 className="text-lg font-bold text-primary">Quick Stats</h3>
+              </div>
               <div className="space-y-4">
                 <div className="bg-secondary p-4 rounded-lg border border-secondary">
                   <p className="text-sm text-secondary">Market</p>
@@ -275,9 +287,12 @@ export default function HomePage() {
 
             <div className="card-gold p-3">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-primary">
-                  Price Forecast
-                </h3>
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-3.5 h-3.5 text-gradient-gold" />
+                  <h3 className="text-sm font-bold text-primary">
+                    Price Forecast
+                  </h3>
+                </div>
                 <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-secondary border border-secondary text-secondary">
                   Soon
                 </span>
@@ -291,9 +306,12 @@ export default function HomePage() {
             </div>
 
             <div className="card-gold p-3">
-              <h3 className="text-sm font-bold text-primary mb-2">
-                Market Insights
-              </h3>
+              <div className="flex items-center gap-2 mb-2">
+                <Lightbulb className="w-3.5 h-3.5 text-gradient-gold" />
+                <h3 className="text-sm font-bold text-primary">
+                  Market Insights
+                </h3>
+              </div>
               <div className="space-y-2">
                 <div className="flex items-start gap-2">
                   <span className="text-gradient-gold text-xs">💡</span>
@@ -323,6 +341,11 @@ export default function HomePage() {
 
             <GoldNews />
           </div>
+        </div>
+
+        {/* Mobile FAQ placement before footer */}
+        <div className="mt-6 xl:hidden">
+          <FAQ />
         </div>
 
         {/* Footer Info */}

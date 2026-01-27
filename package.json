@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@iconscout/react-unicons": "^2.2.5",
     "axios": "^1.13.3",
     "currency": "^4.1.0",
     "date-fns": "^4.1.0",

@@ -108,7 +108,7 @@ export default function GoldNews() {
         <Newspaper className="w-4 h-4 text-gradient-gold" />
         <h3 className="text-sm font-bold text-primary">Latest News</h3>
       </div>
-      <div className="space-y-3 max-h-80 overflow-y-auto">
+      <div className="space-y-3 max-h-140 overflow-y-auto">
         {news.map((article, index) => (
           <a
             key={index}
@@ -131,7 +131,7 @@ export default function GoldNews() {
           </a>
         ))}
       </div>
-      <p className="text-xs text-muted mt-3 text-center">
+      <p className="text-xs text-muted mt-6 mb-2 text-center">
         News powered by GNews API
       </p>
     </div>

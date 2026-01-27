@@ -2,8 +2,7 @@
 
 "use client";
 
-import { Sparkles } from "lucide-react";
-
+import { Gem, ChevronDown, Coins } from "lucide-react";
 type Theme = "white" | "blue" | "dark";
 
 interface HeaderProps {
@@ -24,7 +23,7 @@ export default function Header({ theme, onThemeChange }: HeaderProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-gold p-2 rounded-lg shadow-gold">
-              <Sparkles className="w-6 h-6 text-white" />
+              <Coins className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gradient-gold">
@@ -37,14 +36,14 @@ export default function Header({ theme, onThemeChange }: HeaderProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-secondary border border-secondary rounded-full px-3 py-1">
-              <span className="text-xs text-secondary hidden sm:inline">
+            <div className="relative flex items-center gap-2 bg-secondary border-2 border-secondary rounded-full px-4 py-2 shadow-md hover:shadow-lg hover:border-gold-400 transition-all duration-200 cursor-pointer group">
+              <span className="text-xs text-secondary hidden sm:inline font-bold uppercase tracking-wide">
                 Theme
               </span>
               <select
                 value={theme}
                 onChange={(e) => onThemeChange(e.target.value as Theme)}
-                className="bg-transparent text-primary text-sm font-semibold focus:outline-none"
+                className="bg-transparent text-primary text-sm font-bold focus:outline-none pr-7 appearance-none cursor-pointer min-w-20"
               >
                 {themeOptions.map((option) => (
                   <option key={option.id} value={option.id}>
@@ -52,6 +51,7 @@ export default function Header({ theme, onThemeChange }: HeaderProps) {
                   </option>
                 ))}
               </select>
+              <ChevronDown className="w-4 h-4 text-muted absolute right-3 pointer-events-none transition-transform group-hover:translate-y-0.5" />
             </div>
           </div>
         </div>
