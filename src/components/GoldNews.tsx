@@ -21,23 +21,16 @@ export default function GoldNews() {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        // Using GNews API (free tier - 100 requests/day)
-        // You can also use NewsAPI.org or other free alternatives
-        const response = await fetch(
-          `https://gnews.io/api/v4/search?q=gold+price+market&lang=en&max=5&apikey=` + process.env.NEXT_PUBLIC_GNEWS_API_KEY
-        );
+        // Call our secure API route instead of direct API call
+        const response = await fetch("/api/news");
 
         if (response.ok) {
           const data = await response.json();
-          const articles =
-            data.articles?.map((article: any) => ({
-              title: article.title,
-              url: article.url,
-              source: article.source.name,
-              publishedAt: article.publishedAt,
-              description: article.description,
-            })) || [];
-          setNews(articles);
+          if (data.success && data.articles) {
+            setNews(data.articles);
+          } else {
+            setNews(getMockNews());
+          }
         } else {
           // Fallback to mock data if API fails
           setNews(getMockNews());

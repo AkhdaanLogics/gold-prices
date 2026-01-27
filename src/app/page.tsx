@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Header from "@/components/Header";
 import GoldPriceCard from "@/components/GoldPriceCard";
 import GoldChart from "@/components/GoldChart";
@@ -107,22 +107,32 @@ export default function HomePage() {
     localStorage.setItem("gold-theme", theme);
   }, [theme]);
 
-  // Generate mock historical data for chart
-  const historicalData = generateMockHistoricalData(30);
-  const chartData = historicalData.map((item) => ({
-    date: item.date,
-    price: item.price,
-  }));
+  // Generate mock historical data for chart (memoized to prevent regeneration)
+  const historicalData = useMemo(() => generateMockHistoricalData(30), []);
+
+  const chartData = useMemo(
+    () =>
+      historicalData.map((item) => ({
+        date: item.date,
+        price: item.price,
+      })),
+    [historicalData],
+  );
 
   // Generate price history with changes
-  const priceHistoryData = historicalData.map((item, index) => {
-    const prevPrice = index > 0 ? historicalData[index - 1].price : item.price;
-    const change = ((item.price - prevPrice) / prevPrice) * 100;
-    return {
-      ...item,
-      change: index > 0 ? change : 0,
-    };
-  });
+  const priceHistoryData = useMemo(
+    () =>
+      historicalData.map((item, index) => {
+        const prevPrice =
+          index > 0 ? historicalData[index - 1].price : item.price;
+        const change = ((item.price - prevPrice) / prevPrice) * 100;
+        return {
+          ...item,
+          change: index > 0 ? change : 0,
+        };
+      }),
+    [historicalData],
+  );
 
   return (
     <div className="min-h-screen">
