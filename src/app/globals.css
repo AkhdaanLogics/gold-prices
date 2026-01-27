@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+:root {
+  --background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+  --foreground: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 217, 61, 0.3);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-quicksand), sans-serif;
+  min-height: 100vh;
+}
+
+/* Custom Gold Theme Components */
+.card-gold {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.card-gold:hover {
+  border-color: rgba(255, 217, 61, 0.5);
+  box-shadow: 0 12px 40px rgba(255, 217, 61, 0.2);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #ffd93d 0%, #e6a800 100%);
+  @apply text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200;
+  box-shadow: 0 4px 14px 0 rgba(255, 193, 7, 0.39);
+}
+
+.btn-gold:hover {
+  box-shadow: 0 10px 40px 0 rgba(255, 193, 7, 0.5);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #ffd93d 0%, #e6a800 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.gold-shimmer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 217, 61, 0.4),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+.price-up {
+  color: #10b981;
+}
+
+.price-down {
+  color: #ef4444;
+}
+
+/* Additional dark theme improvements */
+.text-secondary {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.text-muted {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.bg-secondary {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.border-secondary {
+  border-color: rgba(255, 255, 255, 0.1);
+}
