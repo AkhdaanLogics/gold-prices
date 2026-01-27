@@ -40,7 +40,7 @@ export default function GoldPriceCard({ data, loading, unit }: GoldPriceCardProp
           <h2 className="text-4xl font-bold text-gradient-gold">
             {formatCurrency(data.price, data.currency)}
           </h2>
-          <p className="text-xs text-muted mt-1">per {getUnitLabel(unit)}</p>
+          <p className="text-xs text-muted mt-1">per {getUnitLabel(unit || "oz")}</p>
         </div>
 
         <div className="bg-gradient-gold p-3 rounded-lg shadow-gold">
