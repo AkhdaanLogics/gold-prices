@@ -10,6 +10,7 @@ import PriceHistory from "@/components/PriceHistory";
 import GoldNews from "@/components/GoldNews";
 import MarketSentiment from "@/components/MarketSentiment";
 import FAQ from "@/components/FAQ";
+import ContactEmail from "@/components/ContactEmail";
 import {
   RefreshCw,
   AlertCircle,
@@ -244,16 +245,14 @@ export default function HomePage() {
               <GoldChart data={chartData} currency={selectedCurrency} />
             </div>
 
-            <div className="card-gold p-6">
+            <div className="card-gold p-6 flex flex-col">
               <PriceHistory
                 data={priceHistoryData}
                 currency={selectedCurrency}
               />
             </div>
 
-            <div className="hidden xl:block">
-              <FAQ />
-            </div>
+            <FAQ />
           </div>
 
           {/* Right column */}
@@ -340,12 +339,15 @@ export default function HomePage() {
             />
 
             <GoldNews />
+
+            <ContactEmail />
           </div>
         </div>
 
-        {/* Mobile FAQ placement before footer */}
-        <div className="mt-6 xl:hidden">
+        {/* Mobile FAQ and Contact placement before footer */}
+        <div className="mt-6 xl:hidden space-y-6">
           <FAQ />
+          <ContactEmail />
         </div>
 
         {/* Footer Info */}
