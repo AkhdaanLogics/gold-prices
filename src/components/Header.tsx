@@ -4,7 +4,20 @@
 
 import { Sparkles } from "lucide-react";
 
-export default function Header() {
+type Theme = "white" | "blue" | "dark";
+
+interface HeaderProps {
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
+}
+
+export default function Header({ theme, onThemeChange }: HeaderProps) {
+  const themeOptions: { id: Theme; label: string; icon: string }[] = [
+    { id: "white", label: "Light", icon: "🌤" },
+    { id: "blue", label: "Calm", icon: "🔵" },
+    { id: "dark", label: "Dark", icon: "🌙" },
+  ];
+
   return (
     <header className="border-b border-secondary bg-secondary/80 backdrop-blur-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
@@ -23,12 +36,22 @@ export default function Header() {
             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-xs text-muted">Powered by</p>
-              <p className="text-sm font-semibold text-gradient-gold">
-                GoldAPI.io
-              </p>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-secondary border border-secondary rounded-full px-3 py-1">
+              <span className="text-xs text-secondary hidden sm:inline">
+                Theme
+              </span>
+              <select
+                value={theme}
+                onChange={(e) => onThemeChange(e.target.value as Theme)}
+                className="bg-transparent text-primary text-sm font-semibold focus:outline-none"
+              >
+                {themeOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {`${option.icon} ${option.label}`}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

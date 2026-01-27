@@ -67,7 +67,7 @@ export default function ColabDataDisplay() {
           <Database className="w-5 h-5" />
           <h3 className="font-bold">Colab Data Not Found</h3>
         </div>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-secondary">
           {error ||
             "No data available. Make sure gold_data_export.json is in public/data/"}
         </p>
@@ -86,15 +86,17 @@ export default function ColabDataDisplay() {
             <Database className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-800">
+            <h3 className="text-xl font-bold text-primary">
               Colab Analysis Data
             </h3>
-            <p className="text-sm text-gray-600">Generated from Google Colab</p>
+            <p className="text-sm text-secondary">
+              Generated from Google Colab
+            </p>
           </div>
         </div>
 
         {data.generated_at && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted">
             Generated at: {new Date(data.generated_at).toLocaleString()}
           </p>
         )}
@@ -105,7 +107,7 @@ export default function ColabDataDisplay() {
         <div className="card-gold p-6">
           <div className="flex items-center gap-2 mb-6">
             <BarChart3 className="w-5 h-5 text-gold-500" />
-            <h3 className="text-lg font-bold text-gray-800">
+            <h3 className="text-lg font-bold text-primary">
               Statistical Summary
             </h3>
           </div>
@@ -113,7 +115,7 @@ export default function ColabDataDisplay() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {/* Average Price */}
             <div className="bg-gold-50 p-4 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1">Average Price</p>
+              <p className="text-xs text-secondary mb-1">Average Price</p>
               <p className="text-xl font-bold text-gold-700">
                 {formatCurrency(summary.average_price, "USD")}
               </p>
@@ -121,7 +123,7 @@ export default function ColabDataDisplay() {
 
             {/* Min Price */}
             <div className="bg-red-50 p-4 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1">Minimum Price</p>
+              <p className="text-xs text-secondary mb-1">Minimum Price</p>
               <p className="text-xl font-bold text-red-700">
                 {formatCurrency(summary.min_price, "USD")}
               </p>
@@ -129,7 +131,7 @@ export default function ColabDataDisplay() {
 
             {/* Max Price */}
             <div className="bg-green-50 p-4 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1">Maximum Price</p>
+              <p className="text-xs text-secondary mb-1">Maximum Price</p>
               <p className="text-xl font-bold text-green-700">
                 {formatCurrency(summary.max_price, "USD")}
               </p>
@@ -137,7 +139,7 @@ export default function ColabDataDisplay() {
 
             {/* Volatility */}
             <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1">Volatility</p>
+              <p className="text-xs text-secondary mb-1">Volatility</p>
               <p className="text-xl font-bold text-blue-700">
                 ${summary.volatility.toFixed(2)}
               </p>
@@ -149,7 +151,7 @@ export default function ColabDataDisplay() {
                 summary.total_change >= 0 ? "bg-green-50" : "bg-red-50"
               }`}
             >
-              <p className="text-xs text-gray-600 mb-1">Total Change</p>
+              <p className="text-xs text-secondary mb-1">Total Change</p>
               <p
                 className={`text-xl font-bold ${
                   summary.total_change >= 0 ? "text-green-700" : "text-red-700"
@@ -166,7 +168,7 @@ export default function ColabDataDisplay() {
                 summary.total_pct_change >= 0 ? "bg-green-50" : "bg-red-50"
               }`}
             >
-              <p className="text-xs text-gray-600 mb-1">Percentage Change</p>
+              <p className="text-xs text-secondary mb-1">Percentage Change</p>
               <p
                 className={`text-xl font-bold ${
                   summary.total_pct_change >= 0
@@ -187,21 +189,21 @@ export default function ColabDataDisplay() {
         <div className="card-gold p-6">
           <div className="flex items-center gap-2 mb-4">
             <Activity className="w-5 h-5 text-gold-500" />
-            <h3 className="text-lg font-bold text-gray-800">
+            <h3 className="text-lg font-bold text-primary">
               Dataset Information
             </h3>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gold-50 p-4 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1">Total Data Points</p>
+              <p className="text-xs text-secondary mb-1">Total Data Points</p>
               <p className="text-2xl font-bold text-gold-700">
                 {data.historical_data.length}
               </p>
             </div>
 
             <div className="bg-gold-50 p-4 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1">Date Range</p>
+              <p className="text-xs text-secondary mb-1">Date Range</p>
               <p className="text-sm font-semibold text-gold-700">
                 {data.historical_data.length > 0
                   ? `${data.historical_data.length} days`

@@ -23,8 +23,8 @@ export default function PriceHistory({
   if (!data || data.length === 0) {
     return (
       <div className="card-gold p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Price History</h3>
-        <p className="text-gray-500 text-center py-8">
+        <h3 className="text-xl font-bold text-primary mb-4">Price History</h3>
+        <p className="text-secondary text-center py-8">
           No historical data available
         </p>
       </div>
@@ -35,7 +35,7 @@ export default function PriceHistory({
     <div className="card-gold p-6">
       <div className="flex items-center gap-2 mb-6">
         <Clock className="w-5 h-5 text-gradient-gold" />
-        <h3 className="text-xl font-bold text-white">Recent Prices</h3>
+        <h3 className="text-xl font-bold text-primary">Recent Prices</h3>
       </div>
 
       <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -53,7 +53,7 @@ export default function PriceHistory({
                 className="flex items-center justify-between p-4 bg-secondary rounded-lg hover:bg-secondary/80 transition-colors border border-secondary"
               >
                 <div>
-                  <p className="font-semibold text-white">
+                  <p className="font-semibold text-primary">
                     {date.toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",

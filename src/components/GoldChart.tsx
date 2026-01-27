@@ -30,7 +30,7 @@ export default function GoldChart({ data, currency = "USD" }: GoldChartProps) {
   if (!data || data.length === 0) {
     return (
       <div className="card-gold p-6">
-        <div className="flex items-center justify-center h-64 text-gray-400">
+        <div className="flex items-center justify-center h-64 text-muted">
           <p>No chart data available</p>
         </div>
       </div>
@@ -41,7 +41,7 @@ export default function GoldChart({ data, currency = "USD" }: GoldChartProps) {
     <div className="card-gold p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
+          <h3 className="text-xl font-bold text-primary flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-gradient-gold" />
             Price Trend
           </h3>
@@ -61,28 +61,28 @@ export default function GoldChart({ data, currency = "USD" }: GoldChartProps) {
                 <stop offset="95%" stopColor="#ffd93d" stopOpacity={0.1} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
             <XAxis
               dataKey="date"
-              tick={{ fill: "#666", fontSize: 12 }}
+              tick={{ fill: "var(--text-muted)", fontSize: 12 }}
               tickFormatter={(value) => {
                 const date = new Date(value);
                 return `${date.getMonth() + 1}/${date.getDate()}`;
               }}
             />
             <YAxis
-              tick={{ fill: "#666", fontSize: 12 }}
+              tick={{ fill: "var(--text-muted)", fontSize: 12 }}
               tickFormatter={(value) => `$${value.toFixed(0)}`}
               domain={["dataMin - 20", "dataMax + 20"]}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "white",
-                border: "2px solid #ffd93d",
+                backgroundColor: "var(--tooltip-bg)",
+                border: "1px solid var(--card-border)",
                 borderRadius: "8px",
-                boxShadow: "0 4px 14px 0 rgba(255, 193, 7, 0.39)",
+                boxShadow: "var(--card-shadow)",
               }}
-              labelStyle={{ color: "#333", fontWeight: "bold" }}
+              labelStyle={{ color: "var(--foreground)", fontWeight: "bold" }}
               formatter={(value: number | undefined) => [
                 formatCurrency(value ?? 0, currency),
                 "Price",

@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="theme-blue">
       <body className={quicksand.className}>
         <div className="min-h-screen">{children}</div>
       </body>

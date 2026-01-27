@@ -17,7 +17,11 @@ interface GoldPriceCardProps {
   unit?: string;
 }
 
-export default function GoldPriceCard({ data, loading, unit }: GoldPriceCardProps) {
+export default function GoldPriceCard({
+  data,
+  loading,
+  unit,
+}: GoldPriceCardProps) {
   if (loading) {
     return (
       <div className="card-gold p-6 animate-pulse">
@@ -36,11 +40,13 @@ export default function GoldPriceCard({ data, loading, unit }: GoldPriceCardProp
     <div className="card-gold p-6 gold-shimmer">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="text-sm text-gray-600 mb-1">Current Gold Price</p>
+          <p className="text-sm text-secondary mb-1">Current Gold Price</p>
           <h2 className="text-4xl font-bold text-gradient-gold">
             {formatCurrency(data.price, data.currency)}
           </h2>
-          <p className="text-xs text-muted mt-1">per {getUnitLabel(unit || "oz")}</p>
+          <p className="text-xs text-muted mt-1">
+            per {getUnitLabel(unit || "oz")}
+          </p>
         </div>
 
         <div className="bg-gradient-gold p-3 rounded-lg shadow-gold">

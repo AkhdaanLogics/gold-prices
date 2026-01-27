@@ -11,6 +11,8 @@ import { RefreshCw, AlertCircle } from "lucide-react";
 import { GoldAPIResponse, Currency, Unit } from "@/types/gold";
 import { generateMockHistoricalData, getUnitLabel } from "@/lib/utils";
 
+type Theme = "white" | "blue" | "dark";
+
 export default function HomePage() {
   const [goldData, setGoldData] = useState<GoldAPIResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -18,6 +20,7 @@ export default function HomePage() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>("USD");
   const [selectedUnit, setSelectedUnit] = useState<Unit>("oz");
+  const [theme, setTheme] = useState<Theme>("blue");
 
   const fetchGoldPrice = async () => {
     try {
@@ -87,6 +90,21 @@ export default function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    const stored =
+      typeof window !== "undefined" ? localStorage.getItem("gold-theme") : null;
+    if (stored === "white" || stored === "blue" || stored === "dark") {
+      setTheme(stored);
+    }
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove("theme-white", "theme-blue", "theme-dark");
+    root.classList.add(`theme-${theme}`);
+    localStorage.setItem("gold-theme", theme);
+  }, [theme]);
+
   // Generate mock historical data for chart
   const historicalData = generateMockHistoricalData(30);
   const chartData = historicalData.map((item) => ({
@@ -106,7 +124,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Header theme={theme} onThemeChange={setTheme} />
 
       <main className="container mx-auto px-4 py-8">
         {/* Error Message */}
@@ -129,7 +147,7 @@ export default function HomePage() {
         {/* Header Actions */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-white">
+            <h2 className="text-3xl font-bold text-primary">
               Gold Market Dashboard
             </h2>
             <p className="text-secondary mt-1">
@@ -156,7 +174,7 @@ export default function HomePage() {
             <select
               value={selectedCurrency}
               onChange={(e) => setSelectedCurrency(e.target.value as Currency)}
-              className="bg-secondary border border-secondary rounded px-3 py-1 text-white"
+              className="bg-secondary border border-secondary rounded px-3 py-1 text-primary"
             >
               <option value="USD">USD</option>
               <option value="IDR">IDR</option>
@@ -173,7 +191,7 @@ export default function HomePage() {
             <select
               value={selectedUnit}
               onChange={(e) => setSelectedUnit(e.target.value as Unit)}
-              className="bg-secondary border border-secondary rounded px-3 py-1 text-white"
+              className="bg-secondary border border-secondary rounded px-3 py-1 text-primary"
             >
               <option value="oz">Troy Ounce</option>
               <option value="gram">Gram</option>
@@ -199,7 +217,7 @@ export default function HomePage() {
 
           {/* Quick Stats */}
           <div className="card-gold p-6">
-            <h3 className="text-lg font-bold text-white mb-4">Quick Stats</h3>
+            <h3 className="text-lg font-bold text-primary mb-4">Quick Stats</h3>
             <div className="space-y-4">
               <div className="bg-secondary p-4 rounded-lg border border-secondary">
                 <p className="text-sm text-secondary">Market</p>
