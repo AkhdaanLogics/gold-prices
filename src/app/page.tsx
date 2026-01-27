@@ -88,7 +88,7 @@ export default function HomePage() {
         clearInterval((window as any).__goldRefreshInterval);
       }
     };
-  }, []);
+  }, [selectedCurrency, selectedUnit]);
 
   useEffect(() => {
     const stored =
@@ -156,15 +156,6 @@ export default function HomePage() {
               at midnight)
             </p>
           </div>
-
-          <button
-            onClick={fetchGoldPrice}
-            disabled={loading}
-            className="btn-gold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </button>
         </div>
 
         {/* Settings */}
@@ -207,7 +198,11 @@ export default function HomePage() {
           {/* Price Card */}
           <div className="lg:col-span-2">
             {goldData ? (
-              <GoldPriceCard data={goldData} loading={loading} />
+              <GoldPriceCard
+                data={goldData}
+                loading={loading}
+                unit={selectedUnit}
+              />
             ) : (
               <div className="card-gold p-6 animate-pulse">
                 <div className="h-32 bg-gold-200 rounded"></div>
@@ -216,39 +211,58 @@ export default function HomePage() {
           </div>
 
           {/* Quick Stats */}
-          <div className="card-gold p-6">
-            <h3 className="text-lg font-bold text-primary mb-4">Quick Stats</h3>
-            <div className="space-y-4">
-              <div className="bg-secondary p-4 rounded-lg border border-secondary">
-                <p className="text-sm text-secondary">Market</p>
-                <p className="text-xl font-bold text-gradient-gold">
-                  24/7 Trading
-                </p>
+          <div className="space-y-4">
+            <div className="card-gold p-6">
+              <h3 className="text-lg font-bold text-primary mb-4">
+                Quick Stats
+              </h3>
+              <div className="space-y-4">
+                <div className="bg-secondary p-4 rounded-lg border border-secondary">
+                  <p className="text-sm text-secondary">Market</p>
+                  <p className="text-xl font-bold text-gradient-gold">
+                    24/7 Trading
+                  </p>
+                </div>
+                <div className="bg-secondary p-4 rounded-lg border border-secondary">
+                  <p className="text-sm text-secondary">Metal</p>
+                  <p className="text-xl font-bold text-gradient-gold">
+                    Gold (XAU)
+                  </p>
+                </div>
+                <div className="bg-secondary p-4 rounded-lg border border-secondary">
+                  <p className="text-sm text-secondary">Unit</p>
+                  <p className="text-xl font-bold text-gradient-gold">
+                    {getUnitLabel(selectedUnit)}
+                  </p>
+                </div>
               </div>
-              <div className="bg-secondary p-4 rounded-lg border border-secondary">
-                <p className="text-sm text-secondary">Metal</p>
-                <p className="text-xl font-bold text-gradient-gold">
-                  Gold (XAU)
-                </p>
+            </div>
+
+            <div className="card-gold p-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-bold text-primary">
+                  Gold Price Prediction
+                </h3>
+                <span className="text-xs font-semibold px-2 py-1 rounded-full bg-secondary border border-secondary text-secondary">
+                  Coming soon
+                </span>
               </div>
-              <div className="bg-secondary p-4 rounded-lg border border-secondary">
-                <p className="text-sm text-secondary">Unit</p>
-                <p className="text-xl font-bold text-gradient-gold">
-                  {getUnitLabel(selectedUnit)}
-                </p>
-              </div>
+              <p className="text-secondary text-sm leading-relaxed">
+                We are building AI-powered forecasts to help you anticipate gold
+                price movements. Stay tuned!
+              </p>
             </div>
           </div>
         </div>
 
         {/* Chart */}
         <div className="mb-6">
-          <GoldChart data={chartData} currency="USD" />
+          <GoldChart data={chartData} currency={selectedCurrency} />
         </div>
 
         {/* Price History */}
         <div>
-          <PriceHistory data={priceHistoryData} currency="USD" />
+          <PriceHistory data={priceHistoryData} currency={selectedCurrency} />
         </div>
 
         {/* Footer Info */}

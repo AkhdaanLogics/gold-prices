@@ -72,7 +72,7 @@ export default function GoldChart({ data, currency = "USD" }: GoldChartProps) {
             />
             <YAxis
               tick={{ fill: "var(--text-muted)", fontSize: 12 }}
-              tickFormatter={(value) => `$${value.toFixed(0)}`}
+              tickFormatter={(value) => formatCurrency(value, currency)}
               domain={["dataMin - 20", "dataMax + 20"]}
             />
             <Tooltip
