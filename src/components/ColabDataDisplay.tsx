@@ -97,7 +97,7 @@ export default function ColabDataDisplay() {
 
         {data.generated_at && (
           <p className="text-xs text-muted">
-            Generated at: {new Date(data.generated_at).toLocaleString()}
+            Generated at: {new Date(data.generated_at).toLocaleString("en-US")}
           </p>
         )}
       </div>

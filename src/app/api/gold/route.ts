@@ -32,7 +32,6 @@ export async function GET(request: NextRequest) {
           cached: true,
           cacheAge: Math.floor((cacheAge || 0) / 1000), // in seconds
           expiresIn: Math.floor((timeUntilExpiry || 0) / 1000), // in seconds
-          timestamp: Date.now(),
         });
       }
 
@@ -52,7 +51,6 @@ export async function GET(request: NextRequest) {
         success: true,
         data,
         cached: false,
-        timestamp: Date.now(),
       });
     }
 
@@ -119,7 +117,6 @@ export async function GET(request: NextRequest) {
           success: true,
           data: cachedSeries,
           cached: true,
-          timestamp: Date.now(),
         });
       }
 
@@ -127,68 +124,35 @@ export async function GET(request: NextRequest) {
       const { convertPriceToUnit, convertPriceToCurrency } =
         await import("@/lib/utils");
 
-      // Build date list for past N days (most recent first)
-      const dates: string[] = [];
-      const today = new Date();
-      for (let i = 0; i < days; i++) {
-        const d = new Date(today);
-        d.setDate(today.getDate() - i);
-        const y = d.getFullYear();
-        const m = `${d.getMonth() + 1}`.padStart(2, "0");
-        const day = `${d.getDate()}`.padStart(2, "0");
-        dates.push(`${y}${m}${day}`);
-      }
+      // Use getHistoricalData to fetch all data in one API call
+      const historicalDataList = await client.getHistoricalData(
+        metal,
+        "USD",
+        days,
+      );
 
-      const series = [] as { date: string; price: number }[];
-      for (const date of dates) {
-        const singleCacheKey = `gold_historical_${metal}_${currency}_${unit}_${date}`;
-        const cachedDay = cache.get(singleCacheKey) as any;
-        if (cachedDay) {
-          series.push({
-            date: `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`,
-            price: cachedDay.price,
-          });
-          continue;
-        }
-
-        // Fetch in USD first
-        const data: any = await client.getHistoricalPrice(metal, "USD", date);
-
-        // Convert currency if needed
-        let convertedPrice = data.price;
-        if (currency !== "USD") {
-          convertedPrice = await convertPriceToCurrency(
-            data.price,
-            "USD",
-            currency,
-          );
-        }
+      // Process data: convert currency and unit
+      const series = historicalDataList.map((item) => {
+        let price = item.price;
 
         // Convert unit if needed
         if (unit !== "oz") {
-          convertedPrice = convertPriceToUnit(convertedPrice, unit);
+          price = convertPriceToUnit(price, unit);
         }
 
-        cache.set(
-          singleCacheKey,
-          { ...data, price: convertedPrice, currency, unit },
-          30 * 24 * 60 * 60 * 1000,
-        );
+        return {
+          date: item.date,
+          price,
+        };
+      });
 
-        series.push({
-          date: `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`,
-          price: convertedPrice,
-        });
-      }
-
-      // cache whole series for quick reuse
+      // Cache the series
       cache.set(cacheKey, series, 24 * 60 * 60 * 1000); // refresh daily
 
       return NextResponse.json({
         success: true,
-        data: series.reverse(), // oldest first for chart
+        data: series,
         cached: false,
-        timestamp: Date.now(),
       });
     }
 
@@ -203,7 +167,6 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: error.message || "Failed to fetch gold prices",
-        timestamp: Date.now(),
       },
       { status: 500 },
     );

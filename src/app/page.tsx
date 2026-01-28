@@ -27,7 +27,7 @@ export default function HomePage() {
   const [goldData, setGoldData] = useState<GoldAPIResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>("USD");
   const [selectedUnit, setSelectedUnit] = useState<Unit>("oz");
   const [theme, setTheme] = useState<Theme>("blue");
@@ -79,8 +79,10 @@ export default function HomePage() {
       }
 
       const result = await response.json();
+      console.log("Historical data response:", result);
 
       if (result.success && Array.isArray(result.data)) {
+        console.log("Setting historical data:", result.data.length, "items");
         setHistoricalData(result.data);
       } else {
         throw new Error(result.error || "Failed to fetch historical data");
@@ -203,11 +205,19 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold text-primary">
               Gold Market Dashboard
             </h2>
-            <p className="text-secondary mt-1">
-              Last updated: {lastUpdate.toLocaleDateString()} at{" "}
-              {lastUpdate.toLocaleTimeString()} (Jakarta GMT+7 - Daily refresh
-              at midnight)
-            </p>
+            {lastUpdate ? (
+              <p className="text-secondary mt-1">
+                Last updated: {lastUpdate.toLocaleDateString("en-GB")} at{" "}
+                {lastUpdate.toLocaleTimeString("en-GB", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })}{" "}
+                (Jakarta GMT+7 - Daily refresh at midnight)
+              </p>
+            ) : (
+              <p className="text-secondary mt-1">Loading data...</p>
+            )}
           </div>
         </div>
 
@@ -290,8 +300,17 @@ export default function HomePage() {
             <div className="card-gold p-6">
               {loadingHistorical ? (
                 <div className="h-64 animate-pulse bg-secondary rounded" />
+              ) : historicalData.length === 0 ? (
+                <div className="h-64 flex items-center justify-center text-muted">
+                  <p>No historical data available</p>
+                </div>
               ) : (
-                <GoldChart data={chartData} currency={selectedCurrency} />
+                <>
+                  <GoldChart data={chartData} currency={selectedCurrency} />
+                  <p className="text-xs text-muted mt-2">
+                    {chartData.length} data points
+                  </p>
+                </>
               )}
             </div>
 
