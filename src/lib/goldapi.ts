@@ -205,7 +205,7 @@ export class GoldAPIClient {
     // If price is NaN, log error and use current price as fallback
     if (isNaN(price)) {
       console.error(
-        `[Alpha Vantage] Invalid price data for ${dateData.date}: "${dateData.close}"`,
+        `[Alpha Vantage] Invalid price data for ${dateData.date}: "${dateData.price}"`,
       );
       // Try to get current price as fallback
       try {
