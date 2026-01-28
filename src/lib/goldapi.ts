@@ -3,6 +3,7 @@
 // Free tier: 5 API calls per minute and 500 per day
 
 import { GoldAPIResponse, Currency, Metal } from "@/types/gold";
+import { convertPriceToCurrency, convertPriceToUnit } from "@/lib/utils";
 
 const ALPHA_VANTAGE_API_BASE = "https://www.alphavantage.co/query";
 
@@ -115,7 +116,6 @@ export class GoldAPIClient {
 
     // Convert currency if needed
     if (currency !== "USD") {
-      const { convertPriceToCurrency } = await import("@/lib/utils");
       price = await convertPriceToCurrency(price, "USD", currency);
     }
 
@@ -227,7 +227,6 @@ export class GoldAPIClient {
 
     // Convert currency if needed
     if (currency !== "USD" && price > 0) {
-      const { convertPriceToCurrency } = await import("@/lib/utils");
       price = await convertPriceToCurrency(price, "USD", currency);
     }
 
@@ -274,7 +273,6 @@ export class GoldAPIClient {
 
         // Convert currency if needed
         if (currency !== "USD") {
-          const { convertPriceToCurrency } = await import("@/lib/utils");
           price = await convertPriceToCurrency(price, "USD", currency);
         }
 
@@ -314,7 +312,6 @@ export class GoldAPIClient {
     let convertedCh = data.ch;
 
     if (baseCurrency !== targetCurrency) {
-      const { convertPriceToCurrency } = await import("@/lib/utils");
       convertedPrice = await convertPriceToCurrency(
         data.price,
         baseCurrency,
@@ -337,7 +334,6 @@ export class GoldAPIClient {
       );
     }
 
-    const { convertPriceToUnit } = await import("@/lib/utils");
     if (unit !== "oz") {
       convertedPrice = convertPriceToUnit(convertedPrice, unit);
       convertedAsk = convertPriceToUnit(convertedAsk, unit);

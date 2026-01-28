@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getGoldAPIClient } from "@/lib/goldapi";
 import { Currency, Metal } from "@/types/gold";
 import cache from "@/lib/cache";
+import { convertPriceToUnit, convertPriceToCurrency } from "@/lib/utils";
 
 export const runtime = "nodejs";
 export const revalidate = 3600; // Revalidate every hour
@@ -81,7 +82,6 @@ export async function GET(request: NextRequest) {
       const client = getGoldAPIClient();
       const data = await client.getHistoricalPrice(metal, currency, date);
 
-      const { convertPriceToUnit } = await import("@/lib/utils");
       const convertedPrice =
         unit !== "oz" ? convertPriceToUnit(data.price, unit) : data.price;
 
@@ -121,8 +121,6 @@ export async function GET(request: NextRequest) {
       }
 
       const client = getGoldAPIClient();
-      const { convertPriceToUnit, convertPriceToCurrency } =
-        await import("@/lib/utils");
 
       // Use getHistoricalData to fetch all data in one API call
       const historicalDataList = await client.getHistoricalData(
