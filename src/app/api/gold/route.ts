@@ -132,8 +132,13 @@ export async function GET(request: NextRequest) {
       );
 
       // Process data: convert currency and unit
-      const series = historicalDataList.map((item) => {
+      const seriesPromises = historicalDataList.map(async (item) => {
         let price = item.price;
+
+        // Convert currency if needed
+        if (currency !== "USD") {
+          price = await convertPriceToCurrency(price, "USD", currency);
+        }
 
         // Convert unit if needed
         if (unit !== "oz") {
@@ -145,6 +150,8 @@ export async function GET(request: NextRequest) {
           price,
         };
       });
+
+      const series = await Promise.all(seriesPromises);
 
       // Cache the series
       cache.set(cacheKey, series, 24 * 60 * 60 * 1000); // refresh daily
