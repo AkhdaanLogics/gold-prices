@@ -29,7 +29,7 @@ const ITEMS: FAQItem[] = [
   {
     question: "Where does the data come from?",
     answer:
-      "Price data comes from GoldAPI.io. News is fetched through the GNews API via a server-side endpoint to keep API keys secure.",
+      "Price data comes from Alpha Vantage API. News is fetched through the GNews API via a server-side endpoint to keep API keys secure.",
   },
   {
     question: "When is the data updated?",

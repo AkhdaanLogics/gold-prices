@@ -224,9 +224,10 @@ export default function HomePage() {
         {/* Info Banner */}
         <div className="card-gold p-4 mb-6 border-l-4 border-l-gradient-gold">
           <p className="text-secondary text-sm leading-relaxed">
-            Monitor real-time gold prices across multiple currencies and units.
-            Data updates daily at midnight Jakarta time. Use the chart to track
-            30-day trends, view recent price history, and make informed
+            <strong className="text-primary">📊 End-of-Day Pricing:</strong>{" "}
+            Prices shown are official closing prices from the previous trading
+            day. Data updates daily at midnight Jakarta time. Use the chart to
+            track price trends, view historical data, and make informed
             decisions with our market insights.
           </p>
         </div>
@@ -323,8 +324,6 @@ export default function HomePage() {
                 />
               )}
             </div>
-
-            <FAQ />
           </div>
 
           {/* Right column */}
@@ -414,20 +413,16 @@ export default function HomePage() {
 
             <GoldNews />
 
+            <FAQ />
+
             <ContactEmail />
           </div>
-        </div>
-
-        {/* Mobile FAQ and Contact placement before footer */}
-        <div className="mt-6 xl:hidden space-y-6">
-          <FAQ />
-          <ContactEmail />
         </div>
 
         {/* Footer Info */}
         <div className="mt-8 p-4 bg-secondary rounded-lg border border-secondary">
           <div className="text-center text-sm text-secondary">
-            <p className="mb-1">Data from GoldAPI.io</p>
+            <p className="mb-1">Data from AlphaVantage.co</p>
             <p className="text-xs text-muted">
               Created by Akhdaan The Great © {new Date().getFullYear()}
             </p>

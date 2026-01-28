@@ -73,6 +73,7 @@ export class GoldAPIClient {
     metal: Metal = "XAU",
     currency: Currency = "USD",
   ): Promise<GoldAPIResponse> {
+    // Use Alpha Vantage for current price (latest data point)
     const symbol = this.metalSymbolMap[metal];
 
     const data = (await this.fetchAPI({

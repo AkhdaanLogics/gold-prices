@@ -40,12 +40,17 @@ export default function GoldPriceCard({
     <div className="card-gold p-6 gold-shimmer">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="text-sm text-secondary mb-1">Current Gold Price</p>
+          <div className="flex items-center gap-2 mb-1">
+            <p className="text-sm text-secondary">Current Gold Price</p>
+            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">
+              EOD
+            </span>
+          </div>
           <h2 className="text-4xl font-bold text-gradient-gold">
             {formatCurrency(data.price, data.currency)}
           </h2>
           <p className="text-xs text-muted mt-1">
-            per {getUnitLabel(unit || "oz")}
+            per {getUnitLabel(unit || "oz")} • End-of-Day Price
           </p>
         </div>
 
