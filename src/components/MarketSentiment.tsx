@@ -7,26 +7,48 @@ import { TrendingUp, TrendingDown, Minus, Activity } from "lucide-react";
 interface MarketSentimentProps {
   priceChange: number;
   priceChangePercent: number;
+  historicalData?: Array<{ date: string; price: number }>;
 }
 
 export default function MarketSentiment({
   priceChange,
   priceChangePercent,
+  historicalData = [],
 }: MarketSentimentProps) {
-  const getSentiment = () => {
-    const absChange = Math.abs(priceChangePercent);
+  // Calculate trend from historical data
+  const calculateTrend = () => {
+    if (!historicalData || historicalData.length < 2) {
+      return 0;
+    }
 
-    if (priceChangePercent > 1.5) {
+    const oldest = historicalData[0]?.price || 0;
+    const newest = historicalData[historicalData.length - 1]?.price || 0;
+
+    if (oldest === 0) return 0;
+    return ((newest - oldest) / oldest) * 100;
+  };
+
+  const trendPercent = calculateTrend();
+
+  // Combine 24h change and trend for more accurate sentiment
+  const combinedChange = priceChangePercent * 0.3 + trendPercent * 0.7; // 30% weight on 24h, 70% on trend
+
+  const getSentiment = () => {
+    // Use combined change for more accurate sentiment
+    const changeToUse =
+      combinedChange !== 0 ? combinedChange : priceChangePercent;
+
+    if (changeToUse > 2) {
       return {
         label: "Strong Bullish",
         color: "text-green-600",
         bgColor: "bg-green-50",
         borderColor: "border-green-300",
         icon: TrendingUp,
-        description: "Significant upward momentum",
+        description: "Strong upward momentum",
         gauge: 90,
       };
-    } else if (priceChangePercent > 0.5) {
+    } else if (changeToUse > 0.5) {
       return {
         label: "Bullish",
         color: "text-green-500",
@@ -36,17 +58,17 @@ export default function MarketSentiment({
         description: "Positive price movement",
         gauge: 70,
       };
-    } else if (priceChangePercent < -1.5) {
+    } else if (changeToUse < -2) {
       return {
         label: "Strong Bearish",
         color: "text-red-600",
         bgColor: "bg-red-50",
         borderColor: "border-red-300",
         icon: TrendingDown,
-        description: "Significant downward pressure",
+        description: "Strong downward pressure",
         gauge: 10,
       };
-    } else if (priceChangePercent < -0.5) {
+    } else if (changeToUse < -0.5) {
       return {
         label: "Bearish",
         color: "text-red-500",
@@ -89,13 +111,24 @@ export default function MarketSentiment({
               {sentiment.label}
             </span>
           </div>
-          <span className={`text-xs font-semibold ${sentiment.color}`}>
-            {priceChangePercent > 0 ? "+" : ""}
-            {priceChangePercent.toFixed(2)}%
-          </span>
+          <div className="text-right">
+            <span className={`text-xs font-semibold ${sentiment.color}`}>
+              {trendPercent > 0 ? "+" : ""}
+              {trendPercent.toFixed(2)}% (30d)
+            </span>
+            <br />
+            <span
+              className={`text-xs ${priceChangePercent > 0 ? "text-green-500" : priceChangePercent < 0 ? "text-red-500" : "text-gray-500"}`}
+            >
+              {priceChangePercent > 0 ? "+" : ""}
+              {priceChangePercent.toFixed(2)}% (24h)
+            </span>
+          </div>
         </div>
 
-        <p className={`text-xs mb-3 ${sentiment.color}`}>{sentiment.description}</p>
+        <p className={`text-xs mb-3 ${sentiment.color}`}>
+          {sentiment.description}
+        </p>
 
         {/* Sentiment Gauge */}
         <div className="relative">

@@ -416,6 +416,7 @@ export default function HomePage() {
             <MarketSentiment
               priceChange={goldData?.ch || 0}
               priceChangePercent={goldData?.chp || 0}
+              historicalData={historicalData}
             />
 
             <GoldNews />

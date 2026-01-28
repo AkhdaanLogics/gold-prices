@@ -193,13 +193,13 @@ export class GoldAPIClient {
     console.log(
       `[Alpha Vantage] Raw dateData:`,
       dateData,
-      `close value: "${dateData.close}"`,
+      `close value: "${dateData.price}"`,
     );
 
-    let price = parseFloat(dateData.close);
+    let price = parseFloat(dateData.price);
 
     console.log(
-      `[Alpha Vantage] Parsed price from "${dateData.close}" = ${price}`,
+      `[Alpha Vantage] Parsed price from "${dateData.price}" = ${price}`,
     );
 
     // If price is NaN, log error and use current price as fallback
