@@ -24,9 +24,16 @@ interface ChartDataPoint {
 interface GoldChartProps {
   data: ChartDataPoint[];
   currency?: string;
+  timeRange: number;
+  setTimeRange: (value: number) => void;
 }
 
-export default function GoldChart({ data, currency = "USD" }: GoldChartProps) {
+export default function GoldChart({
+  data,
+  currency = "USD",
+  timeRange,
+  setTimeRange,
+}: GoldChartProps) {
   if (!data || data.length === 0) {
     return (
       <div className="card-gold p-6">
@@ -45,7 +52,20 @@ export default function GoldChart({ data, currency = "USD" }: GoldChartProps) {
             <TrendingUp className="w-5 h-5 text-gradient-gold" />
             Price Trend
           </h3>
-          <p className="text-sm text-secondary mt-1">Last 30 days</p>
+          <p className="text-sm text-secondary mt-1">Last {timeRange} days</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-secondary">Trend:</label>
+          <select
+            value={timeRange}
+            onChange={(e) => setTimeRange(parseInt(e.target.value))}
+            className="bg-secondary border border-secondary rounded px-3 py-1 text-primary text-sm"
+          >
+            <option value="7">7 Days</option>
+            <option value="30">30 Days</option>
+            <option value="60">60 Days</option>
+          </select>
         </div>
       </div>
 

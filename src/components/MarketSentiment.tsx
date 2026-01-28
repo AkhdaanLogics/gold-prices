@@ -8,12 +8,14 @@ interface MarketSentimentProps {
   priceChange: number;
   priceChangePercent: number;
   historicalData?: Array<{ date: string; price: number }>;
+  timeRange: number;
 }
 
 export default function MarketSentiment({
   priceChange,
   priceChangePercent,
   historicalData = [],
+  timeRange,
 }: MarketSentimentProps) {
   // Calculate trend from historical data
   const calculateTrend = () => {
@@ -114,7 +116,7 @@ export default function MarketSentiment({
           <div className="text-right">
             <span className={`text-xs font-semibold ${sentiment.color}`}>
               {trendPercent > 0 ? "+" : ""}
-              {trendPercent.toFixed(2)}% (30d)
+              {trendPercent.toFixed(2)}% ({timeRange}d)
             </span>
             <br />
             <span

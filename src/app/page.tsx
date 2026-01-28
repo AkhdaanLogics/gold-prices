@@ -264,19 +264,6 @@ export default function HomePage() {
               <option value="baht">Baht</option>
             </select>
           </div>
-
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-secondary">Trend:</label>
-            <select
-              value={timeRange}
-              onChange={(e) => setTimeRange(parseInt(e.target.value))}
-              className="bg-secondary border border-secondary rounded px-3 py-1 text-primary"
-            >
-              <option value="7">7 Days</option>
-              <option value="30">30 Days</option>
-              <option value="60">60 Days</option>
-            </select>
-          </div>
         </div>
 
         {/* Main Grid */}
@@ -306,7 +293,12 @@ export default function HomePage() {
                 </div>
               ) : (
                 <>
-                  <GoldChart data={chartData} currency={selectedCurrency} />
+                  <GoldChart
+                    data={chartData}
+                    currency={selectedCurrency}
+                    timeRange={timeRange}
+                    setTimeRange={setTimeRange}
+                  />
                   <p className="text-xs text-muted mt-2">
                     {chartData.length} data points
                   </p>
@@ -417,6 +409,7 @@ export default function HomePage() {
               priceChange={goldData?.ch || 0}
               priceChangePercent={goldData?.chp || 0}
               historicalData={historicalData}
+              timeRange={timeRange}
             />
 
             <GoldNews />
