@@ -58,12 +58,14 @@ export class GoldAPIClient {
       throw new Error(`Alpha Vantage API Error: ${data["Error Message"]}`);
     }
 
-    // Debug: Log response structure
+    // Debug: Log full response structure for troubleshooting
     console.log(`[Alpha Vantage] Query: ${params.function}`, {
       symbol: params.symbol,
       hasData: !!data.data,
       dataLength: data.data?.length || 0,
       latestDate: data.data?.[0]?.date,
+      responseKeys: Object.keys(data),
+      firstDataPoint: data.data?.[0],
     });
 
     return data;
@@ -83,6 +85,11 @@ export class GoldAPIClient {
     })) as AlphaVantageMetalData;
 
     if (!data.data || data.data.length === 0) {
+      console.error(`[Alpha Vantage] Empty response for ${symbol}`, {
+        data,
+        symbol,
+        metalSymbolMap: this.metalSymbolMap,
+      });
       throw new Error(`No data available for ${symbol}`);
     }
 
